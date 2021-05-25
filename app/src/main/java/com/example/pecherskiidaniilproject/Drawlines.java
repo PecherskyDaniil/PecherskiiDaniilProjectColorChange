@@ -23,6 +23,8 @@ import java.util.ArrayList;
 public class Drawlines extends View {
     Path path = new Path();
     Paint paint = new Paint();
+    boolean testline;
+    int colorLine=Color.BLACK;
     Bitmap bitmap;
     Canvas canvas;
     public boolean startLine;
@@ -47,12 +49,6 @@ public class Drawlines extends View {
     public boolean onTouchEvent(MotionEvent event) {
         coordinaty.add(event.getY());
         coordinatx.add(event.getX());
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            clearCanvas = true;
-            startLine = true;
-            coordinaty.clear();
-            coordinatx.clear();
-        }
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 path.moveTo(coordinatx.get(coordinatx.size() - 1), coordinaty.get(coordinaty.size() - 1));
@@ -81,7 +77,7 @@ public class Drawlines extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        paint.setColor(Color.BLUE);
+        paint.setColor(colorLine);
         paint.setAntiAlias(true);
         paint.setStrokeWidth(20);
         paint.setStyle(Paint.Style.STROKE);

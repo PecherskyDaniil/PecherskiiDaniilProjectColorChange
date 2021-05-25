@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PecherskiiDaniilProject</string>
+    <string name="about_game">В данной игре вы должны нарисовать данные линии определенного цвета за ограниченное время</string>
 </resources>

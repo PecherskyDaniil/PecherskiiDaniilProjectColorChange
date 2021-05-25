@@ -12,7 +12,6 @@ import android.widget.Button;
 public class LevelsActivity extends AppCompatActivity {
     int availableLevel,unavailableLevel,keyOfLevel,levelNumbers;
     Button backToMenu;
-
     Intent toMenu,toGame;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

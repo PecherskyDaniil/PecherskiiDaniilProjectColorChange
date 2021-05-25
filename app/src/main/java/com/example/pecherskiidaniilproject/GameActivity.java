@@ -10,51 +10,35 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Math.abs;
 
 public class GameActivity extends AppCompatActivity {
     Bundle arguments;
     int keyOfLevel;
+    long startTime=60*1000;
+    long intervalTime=1*1000;
     TextView level;
     Drawlines drawlines;
     String drawType = "";
     ArrayList<Float> coordinatx = new ArrayList<>();
     ArrayList<Float> coordinaty = new ArrayList<>();
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            drawType = lineTest(drawlines.coordinaty, drawlines.coordinatx);
-            if (questArray.size() != 0) {
-                if (drawType == "vertical" && questArray.get(0) == "|") {
-                    questArray.remove(0);
-                    questPrint(questArray);
-                }
-                if (drawType == "horizontal" && questArray.get(0) == "-") {
-                    questArray.remove(0);
-                    questPrint(questArray);
-                }
-            } else {
-                questText.setText("You win");
-            }
-            coordinatx.clear();
-            coordinaty.clear();
-        }
-        coordinatx.add(event.getX());
-        coordinaty.add(event.getY());
-
-        return super.onTouchEvent(event);
-    }
-
+    ArrayList<Integer> colorArray=new ArrayList<>();
+    Button acceptTurn;
+    ImageButton redButton,blueButton,greenButton;
     public String lineTest(ArrayList<Float> coordinaty, ArrayList<Float> coordinatx) {
         int verticalLineCounter = 0;
         float endy = coordinaty.get(coordinaty.size() - 1);
@@ -118,7 +102,6 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Random random = new Random();
         setContentView(R.layout.activity_game);
-        drawlines=findViewById(R.id.draw);
         questArray = new ArrayList<>();
         arguments = getIntent().getExtras();
         questText = findViewById(R.id.questText);
@@ -132,17 +115,121 @@ public class GameActivity extends AppCompatActivity {
                 questArray.add("-");
             }
         }
-        questPrint(questArray);
-
-    }
-
-
-    public void questPrint(ArrayList<String> questArray) {
-        questText.setText("");
-        for (int i = 0; i < questArray.size(); i++) {
-            questText.setText(questText.getText() + " " + questArray.get(i));
+        for (int i = 0; i < 10 + 5 * (keyOfLevel + 1); i++) {
+            if (random.nextInt(3)==1){
+                colorArray.add(Color.BLUE);
+            }else if(random.nextInt(3)==2){
+                colorArray.add(Color.GREEN);
+            }else{
+                colorArray.add(Color.RED);
+            }
         }
+        questPrint(questArray,colorArray);
+        TextView timerText=findViewById(R.id.timer);
+        final GameCountDownTimer gameCountDownTimer=new GameCountDownTimer(timerText,intervalTime,startTime/(keyOfLevel+1));
+        gameCountDownTimer.start();
+        acceptTurn=findViewById(R.id.acceptTurn);
+        acceptTurn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (gameCountDownTimer.isTimeEnd()) {
+                    if (drawlines.coordinatx.size() != 0 && colorArray.size()!=0) {
+                        drawType = lineTest(drawlines.coordinaty, drawlines.coordinatx);
+                        if (questArray.size() != 0) {
+                            if (drawType == "vertical" && questArray.get(0) == "|" && drawlines.colorLine==colorArray.get(0)) {
+                                questArray.remove(0);
+                                colorArray.remove(0);
+                                questPrint(questArray,colorArray);
+                            }
+                            if (drawType == "horizontal" && questArray.get(0) == "-" && drawlines.colorLine==colorArray.get(0)) {
+                                questArray.remove(0);
+                                colorArray.remove(0);
+                                questPrint(questArray,colorArray);
+                            }
+                            if (drawlines.coordinatx.size()==0){
+                                questText.setText("You win");
+                                gameCountDownTimer.cancel();
+                            }
+                        } else {
+                            questText.setText("You win");
+                            gameCountDownTimer.cancel();
+                        }
+                        drawlines.clearCanvas = true;
+                        drawlines.startLine = true;
+                        drawlines.coordinaty.clear();
+                        drawlines.coordinatx.clear();
+                        drawlines.invalidate();
+                    }else{
+                        if (drawlines.coordinatx.size()==0){
+                            questText.setText("You win");
+                            gameCountDownTimer.cancel();
+                        }
+                    }
+                }else{
+                    questText.setText("You lose");
+                    questArray.clear();
+                }
+            }
+        });
+        drawlines=findViewById(R.id.draw);
+        redButton=findViewById(R.id.red);
+        redButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawlines.colorLine=Color.RED;
+            }
+        });
+        blueButton=findViewById(R.id.blue);
+        blueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawlines.colorLine=Color.BLUE;
+            }
+        });
+        greenButton=findViewById(R.id.green);
+        greenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawlines.colorLine=Color.GREEN;
+            }
+        });
 
     }
 
+
+    public void questPrint(ArrayList<String> questArray,ArrayList<Integer> colorArray) {
+        if (questArray.size()!=0) {
+            questText.setText(questArray.get(0));
+            questText.setTextColor(colorArray.get(0));
+        }else{
+            questText.setText("");
+        }
+    }
+
+}
+class GameCountDownTimer extends CountDownTimer{
+    TextView timerText;
+    int intervalTime;
+    float startTime;
+    boolean timeEnd=true;
+    float timeProcess;
+    public GameCountDownTimer(TextView timerText, long intervalTime, long startTime) {
+        super(startTime, intervalTime);
+        this.timerText = timerText;
+    }
+
+    @Override
+    public void onTick(long millisUntilFinished) {
+        timerText.setText("Осталось "+(millisUntilFinished/1000)+" секунд");
+    }
+
+    public boolean isTimeEnd() {
+        return timeEnd;
+    }
+
+    @Override
+    public void onFinish() {
+        timerText.setText("Время на исходе!");
+        timeEnd=false;
+    }
 }

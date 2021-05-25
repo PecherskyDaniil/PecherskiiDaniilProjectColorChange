@@ -42,9 +42,11 @@
             android:textColor="@color/colorUnavailable"
             android:id="@+id/level3"
             android:layout_gravity="center_horizontal"/>
-
-
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/about_game"
+            android:textSize="40sp"/>
     </LinearLayout>
 
 

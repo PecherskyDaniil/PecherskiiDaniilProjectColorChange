@@ -19,13 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         beginPlay=findViewById(R.id.beginPlay);
-        beginOptions=findViewById(R.id.options);
 
         play=new Intent(MainActivity.this,LevelsActivity.class);
-
-
-
-
         beginPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
