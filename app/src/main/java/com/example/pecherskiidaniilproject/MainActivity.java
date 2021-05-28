@@ -17,14 +17,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        beginOptions=findViewById(R.id.optionsbutton);
         beginPlay=findViewById(R.id.beginPlay);
-
+        options=new Intent(MainActivity.this,OptionsActivity.class);
         play=new Intent(MainActivity.this,LevelsActivity.class);
         beginPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(play);
+            }
+        });
+        beginOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(options);
             }
         });
 

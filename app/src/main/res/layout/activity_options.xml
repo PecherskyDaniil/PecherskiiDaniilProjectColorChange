@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OptionsActivity"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Настройки"
+        android:textSize="50sp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/colorchoice1"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:entries="@array/colorArray" />
+
+        <Spinner
+            android:id="@+id/colorchoice2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:entries="@array/colorArray"/>
+
+        <Spinner
+            android:id="@+id/colorchoice3"
+            android:layout_width="132dp"
+            android:layout_height="match_parent"
+            android:entries="@array/colorArray" />
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:textSize="40sp"
+        android:id="@+id/save"/>
+
+</LinearLayout>

@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,7 +40,11 @@ public class GameActivity extends AppCompatActivity {
     ArrayList<Float> coordinaty = new ArrayList<>();
     ArrayList<Integer> colorArray=new ArrayList<>();
     Button acceptTurn;
-    ImageButton redButton,blueButton,greenButton;
+    ImageButton button1,button2,button3;
+    SharedPreferences prefs;
+    ArrayList<String> colorsArrayData;//no id: default value
+    ArrayList<Integer> colorsArray;
+    ArrayList<ImageButton> buttonsArray;
     public String lineTest(ArrayList<Float> coordinaty, ArrayList<Float> coordinatx) {
         int verticalLineCounter = 0;
         float endy = coordinaty.get(coordinaty.size() - 1);
@@ -102,12 +108,54 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Random random = new Random();
         setContentView(R.layout.activity_game);
+        colorsArrayData=new ArrayList<>();
+        colorsArray=new ArrayList<>();
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         questArray = new ArrayList<>();
         arguments = getIntent().getExtras();
         questText = findViewById(R.id.questText);
+        buttonsArray=new ArrayList<>();
+        button1=findViewById(R.id.red);
+        button2=findViewById(R.id.blue);
+        button3=findViewById(R.id.green);
+        buttonsArray.add(button1);
+        buttonsArray.add(button2);
+        buttonsArray.add(button3);
         keyOfLevel = arguments.getInt("keyLevel");
         level = findViewById(R.id.level);
         level.setText("Сложность  " + (keyOfLevel + 1));
+        colorsArrayData.add(prefs.getString("color1", "red"));
+        colorsArrayData.add(prefs.getString("color2","blue"));
+        colorsArrayData.add(prefs.getString("color3", "green"));
+        for (int i = 0; i < colorsArrayData.size(); i++) {
+            switch (colorsArrayData.get(i)){
+                case ("black"):
+                    colorsArray.add(Color.BLACK);
+                    buttonsArray.get(i).setImageResource(R.drawable.black);
+                    break;
+
+                case ("green"):
+                    colorsArray.add(Color.GREEN);
+                    buttonsArray.get(i).setImageResource(R.drawable.green);
+                    break;
+
+                case ("blue"):
+                    colorsArray.add(Color.BLUE);
+                    buttonsArray.get(i).setImageResource(R.drawable.blue);
+                    break;
+
+                case ("red"):
+                    colorsArray.add(Color.RED);
+                    buttonsArray.get(i).setImageResource(R.drawable.red);
+                    break;
+
+                case ("yellow"):
+                    colorsArray.add(Color.YELLOW);
+                    buttonsArray.get(i).setImageResource(R.drawable.yellow);
+                    break;
+
+            }
+        }
         for (int i = 0; i < 10 + 5 * keyOfLevel; i++) {
             if (random.nextBoolean()) {
                 questArray.add("|");
@@ -117,11 +165,11 @@ public class GameActivity extends AppCompatActivity {
         }
         for (int i = 0; i < 10 + 5 * (keyOfLevel + 1); i++) {
             if (random.nextInt(3)==1){
-                colorArray.add(Color.BLUE);
+                colorArray.add(colorsArray.get(0));
             }else if(random.nextInt(3)==2){
-                colorArray.add(Color.GREEN);
+                colorArray.add(colorsArray.get(1));
             }else{
-                colorArray.add(Color.RED);
+                colorArray.add(colorsArray.get(2));
             }
         }
         questPrint(questArray,colorArray);
@@ -146,7 +194,7 @@ public class GameActivity extends AppCompatActivity {
                                 colorArray.remove(0);
                                 questPrint(questArray,colorArray);
                             }
-                            if (drawlines.coordinatx.size()==0){
+                            if (questArray.size()==0){
                                 questText.setText("You win");
                                 gameCountDownTimer.cancel();
                             }
@@ -160,7 +208,7 @@ public class GameActivity extends AppCompatActivity {
                         drawlines.coordinatx.clear();
                         drawlines.invalidate();
                     }else{
-                        if (drawlines.coordinatx.size()==0){
+                        if (questArray.size()==0){
                             questText.setText("You win");
                             gameCountDownTimer.cancel();
                         }
@@ -172,25 +220,22 @@ public class GameActivity extends AppCompatActivity {
             }
         });
         drawlines=findViewById(R.id.draw);
-        redButton=findViewById(R.id.red);
-        redButton.setOnClickListener(new View.OnClickListener() {
+        button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawlines.colorLine=Color.RED;
+                drawlines.colorLine=colorsArray.get(0);
             }
         });
-        blueButton=findViewById(R.id.blue);
-        blueButton.setOnClickListener(new View.OnClickListener() {
+        button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawlines.colorLine=Color.BLUE;
+                drawlines.colorLine=colorsArray.get(1);
             }
         });
-        greenButton=findViewById(R.id.green);
-        greenButton.setOnClickListener(new View.OnClickListener() {
+        button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawlines.colorLine=Color.GREEN;
+                drawlines.colorLine=colorsArray.get(2);
             }
         });
 

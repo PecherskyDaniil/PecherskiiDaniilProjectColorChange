@@ -5,4 +5,11 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="colorUnavailable">#950000</color>
     <color name="colorAvailable">#289500</color>
+    <array name="colorArray">
+        <item >blue</item>
+        <item >red</item>
+        <item >yellow</item>
+        <item >green</item>
+        <item >black</item>
+    </array>
 </resources>
